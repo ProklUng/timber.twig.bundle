@@ -4,8 +4,6 @@ namespace Prokl\TimberTwigBundle\Services;
 
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBag;
-use Symfony\Component\Filesystem\Filesystem;
-use Timber\Timber;
 
 /**
  * Class TwigConfig
@@ -31,16 +29,6 @@ class TwigConfig
     private $containerBag;
 
     /**
-     * @var Timber $twig Твиг.
-     */
-    private $twig;
-
-    /**
-     * @var Filesystem $filesystem Файловая система.
-     */
-    private $filesystem;
-
-    /**
      * @var array $configuration Конфигурация TWIG.
      */
     private $configuration = [];
@@ -49,16 +37,10 @@ class TwigConfig
      * TwigConfig constructor.
      *
      * @param ContainerBag $containerBag Параметры из контейнера.
-     * @param Timber       $twig         Твиг.
-     * @param Filesystem   $filesystem   Файловая система Symfony.
      */
     public function __construct(
-        ContainerBag $containerBag,
-        Timber $twig,
-        Filesystem $filesystem
+        ContainerBag $containerBag
     ) {
-        $this->twig = $twig;
-        $this->filesystem = $filesystem;
         $this->containerBag = $containerBag;
 
         if ($this->containerBag->has('twig')) {

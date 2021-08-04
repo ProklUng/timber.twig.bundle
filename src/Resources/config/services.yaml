@@ -8,10 +8,6 @@ services:
     Twig\Extension\ExtensionInterface:
       tags: ['twig.extension']
 
-  twig_filesystem:
-    public: false
-    class: Symfony\Component\Filesystem\Filesystem
-
   # Twig
   twig:
     class: Timber\Timber
@@ -33,8 +29,6 @@ services:
     class: Prokl\TimberTwigBundle\Services\TwigConfig
     arguments:
       - '@parameter_bag'
-      - '@twig'
-      - '@twig_filesystem'
 
   Prokl\TimberTwigBundle\Services\TwigConfig: '@twig.config'
 
@@ -56,6 +50,20 @@ services:
   twig_configurator.templates_location:
     class: Prokl\TimberTwigBundle\Services\TwigConfiguratorWordpress
     factory: ['@twig_configurator', 'pathTemplates']
+
+  # Прокси к Тимберу (для миграции на следующую версию).
+  timber_proxy:
+    class: Prokl\TimberTwigBundle\Services\Proxy\TimberProxy
+
+  Prokl\TimberTwigBundle\Services\Proxy\TimberProxy: '@timber_proxy'
+  Prokl\TimberTwigBundle\Services\Proxy\Contract\TimberProxyInterface: '@timber_proxy'
+
+  # Инициализация Тимбера путями к шаблонам из конфигов.
+  timber_init:
+    class: Prokl\TimberTwigBundle\Services\Proxy\TimberProxy
+    factory: ['@timber_proxy', 'setLocations']
+    arguments: ['@twig_configurator.templates_location']
+    tags: ['service.bootstrap']
 
   # Template cache warmer
   Prokl\TimberTwigBundle\Services\TemplateCacheWarmer:

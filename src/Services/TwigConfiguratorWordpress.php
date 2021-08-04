@@ -34,8 +34,8 @@ class TwigConfiguratorWordpress
     /**
      * TwigConfiguratorWordpress constructor.
      *
-     * @param ContainerBag $containerBag
-     * @param Timber       $twig
+     * @param ContainerBag $containerBag Переменные контейнера.
+     * @param Timber       $twig         Timber.
      */
     public function __construct(ContainerBag $containerBag, Timber $twig)
     {

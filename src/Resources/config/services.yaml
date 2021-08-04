@@ -26,6 +26,8 @@ services:
     class: Twig\Environment
     factory: ['@Timber\Loader', 'get_twig']
 
+  Twig\Environment: '@twig.instance'
+
   # Конфигурация Твига.
   twig.config:
     class: Prokl\TimberTwigBundle\Services\TwigConfig
@@ -46,6 +48,14 @@ services:
     class: Prokl\TimberTwigBundle\Services\TwigExtensions
     factory: ['@twig.extension', 'hooksInit']
     tags: ['service.bootstrap']
+
+  twig_configurator:
+    class: Prokl\TimberTwigBundle\Services\TwigConfiguratorWordpress
+    arguments: ['@parameter_bag', '@twig']
+
+  twig_configurator.templates_location:
+    class: Prokl\TimberTwigBundle\Services\TwigConfiguratorWordpress
+    factory: ['@twig_configurator', 'pathTemplates']
 
   # Template cache warmer
   Prokl\TimberTwigBundle\Services\TemplateCacheWarmer:

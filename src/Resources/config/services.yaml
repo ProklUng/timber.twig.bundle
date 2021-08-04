@@ -65,6 +65,11 @@ services:
     arguments: ['@twig_configurator.templates_location']
     tags: ['service.bootstrap']
 
+  # Тимберовский глобальный контекст.
+  timber_context:
+    class: Prokl\TimberTwigBundle\Services\Proxy\TimberProxy
+    factory: ['@timber_proxy', 'getContext']
+
   # Template cache warmer
   Prokl\TimberTwigBundle\Services\TemplateCacheWarmer:
     autoconfigure: false

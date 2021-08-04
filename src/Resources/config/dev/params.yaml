@@ -1,0 +1,9 @@
+parameters:
+  twig:
+    renders:
+      default:
+        class: Local\Renders\ViewContent
+        template: './sectionsItems/content.twig'
+
+    functions:
+      get_twig_header: Prokl\TimberTwigBundle\Tests\Fixtures\FooFunctionHandler::handler

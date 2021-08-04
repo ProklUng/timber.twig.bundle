@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  parameter_bag:
+    class: Symfony\Component\DependencyInjection\ParameterBag\ContainerBag
+    arguments: ["@service_container"]
+
+  Prokl\TimberTwigBundle\Tests\Fixtures\FooFunctionHandler: ~

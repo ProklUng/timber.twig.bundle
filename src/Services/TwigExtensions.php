@@ -24,11 +24,6 @@ class TwigExtensions
     private $twigConfig;
 
     /**
-     * @var twigInitializer $twigInitializer Инициализатор Твига.
-     */
-    private $twigInitializer;
-
-    /**
      * @var ContainerInterface $container Контейнер.
      */
     private $container;
@@ -43,16 +38,13 @@ class TwigExtensions
      *
      * @param TwigConfig         $twigConfig
      * @param ContainerInterface $container
-     * @param TwigInitializer    $twigInitializer
      */
     public function __construct(
         TwigConfig $twigConfig,
-        ContainerInterface $container,
-        TwigInitializer $twigInitializer
+        ContainerInterface $container
     ) {
         $this->twigConfig = $twigConfig;
         $this->container = $container;
-        $this->twigInitializer = $twigInitializer;
     }
 
     /**

@@ -24,7 +24,7 @@ services:
       - { name: 'service.bootstrap', priority: 100}
 
   twig.extension.init.hook:
-    class: Prokl\TimberTwigBundle\Services\TwigExtensions
+    class: Prokl\TimberTwigBundle\Services\TwigInitializer
     factory: ['@twig_initializer', 'applyFunctions']
     arguments: ['@twig_function_config']
     tags:
@@ -62,7 +62,7 @@ services:
 
   twig.extension:
     class: Prokl\TimberTwigBundle\Services\TwigExtensions
-    arguments: ['@twig.config', '@service_container', '@twig_initializer']
+    arguments: ['@twig.config', '@service_container']
 
   twig_function_config:
     class: Prokl\TimberTwigBundle\Services\TwigExtensions

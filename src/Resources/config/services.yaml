@@ -8,6 +8,13 @@ services:
     Twig\Extension\ExtensionInterface:
       tags: ['twig.extension']
 
+  # Подхват Twig extensions
+  twig_initializer:
+    class: Prokl\TimberTwigBundle\Services\TwigInitializer
+    arguments:
+      - '@twig.instance'
+      - !tagged_iterator twig.extension
+
   # Twig
   twig:
     class: Timber\Timber
@@ -77,3 +84,17 @@ services:
       - '@twig.instance'
     class: Prokl\TimberTwigBundle\Services\TemplateCacheWarmer
     tags: [kernel.cache_warmer]
+
+  # Twig loader
+#  twig.native.loader:
+#    class: Twig\Loader\FilesystemLoader
+#    arguments:
+#      - '%twig_paths%'
+#
+#  twig.service:
+#    class: Prokl\TimberTwigBundle\Services\TwigService
+#    arguments:
+#      - '@twig.loader'
+#      - '%debug%'
+#      - '%twig_cache_dir%'
+#      - '%twig_config%'

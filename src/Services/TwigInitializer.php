@@ -64,6 +64,10 @@ class TwigInitializer
      */
     public function applyFunctions(array $functions) : void
     {
+        if (!$functions) {
+            return;
+        }
+
         foreach ($functions as $function => $callable) {
             if (!is_callable($callable)) {
                 throw new RuntimeException('Twig function handler must be callable.');

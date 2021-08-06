@@ -5,8 +5,6 @@ namespace Prokl\TimberTwigBundle\Services;
 use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Timber\Timber;
-use Timber\Twig_Function;
-use Twig\Environment;
 
 /**
  * Class TwigExtensions
@@ -26,39 +24,41 @@ class TwigExtensions
     private $twigConfig;
 
     /**
+     * @var twigInitializer $twigInitializer Инициализатор Твига.
+     */
+    private $twigInitializer;
+
+    /**
      * @var ContainerInterface $container Контейнер.
      */
     private $container;
+
+    /**
+     * @var array $result
+     */
+    private $result = [];
 
     /**
      * TwigExtensions constructor.
      *
      * @param TwigConfig         $twigConfig
      * @param ContainerInterface $container
+     * @param TwigInitializer    $twigInitializer
      */
     public function __construct(
         TwigConfig $twigConfig,
-        ContainerInterface $container
+        ContainerInterface $container,
+        TwigInitializer $twigInitializer
     ) {
         $this->twigConfig = $twigConfig;
         $this->container = $container;
-    }
-
-    /**
-     * Инициализация событий Wordpress.
-     *
-     * @return void
-     */
-    public function hooksInit(): void
-    {
-        // Кастомные функции Twig.
-        add_filter('timber/twig', [$this, 'addFunctions']);
+        $this->twigInitializer = $twigInitializer;
     }
 
     /**
      * Подмешать глобальный контекст.
      *
-     * @param array $data
+     * @param array $data Контекст.
      *
      * @return array
      *
@@ -71,15 +71,13 @@ class TwigExtensions
         return array_merge($data, $context);
     }
 
-     /**
+    /**
      * My custom Twig functionality.
      *
-     * @param Environment $twig Twig.
-     *
-     * @return Environment
+     * @return array
      * @throws Exception
      */
-    public function addFunctions(Environment $twig): Environment
+    public function functions() : array
     {
         /** Загрузить конфигурацию. */
         $arConfig = $this->twigConfig->getTwigFunctionsConfig();
@@ -88,7 +86,7 @@ class TwigExtensions
             $callback = $handler;
 
             // Класс::метод могут быть не статическими. Обработка.
-            if (strpos($handler, '::') !== false) {
+            if (is_string($handler) && strpos($handler, '::') !== false) {
                 $parsedParams = $this->parseCallableString($handler);
 
                 // Пытаемся взять класс из сервис-контейнера, если в начале стоит @.
@@ -104,17 +102,10 @@ class TwigExtensions
                 ];
             }
 
-            // Заглушенная проблема.
-            try {
-                $twig->addFunction(new Twig_Function(
-                    $function,
-                    $callback
-                ));
-            } catch (Exception $e) {
-            }
+            $this->result[$function] = $callback;
         }
 
-        return $twig;
+        return $this->result;
     }
 
     /**

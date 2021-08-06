@@ -15,6 +15,26 @@ services:
       - '@twig.instance'
       - !tagged_iterator twig.extension
 
+  # Инициализация Тимбера путями к шаблонам из конфигов.
+  timber_init:
+    class: Prokl\TimberTwigBundle\Services\Proxy\TimberProxy
+    factory: ['@timber_proxy', 'setLocations']
+    arguments: ['@twig_configurator.templates_location']
+    tags:
+      - { name: 'service.bootstrap', priority: 100}
+
+  twig.extension.init.hook:
+    class: Prokl\TimberTwigBundle\Services\TwigExtensions
+    factory: ['@twig.extension', 'hooksInit']
+    tags:
+      - { name: 'service.bootstrap', priority: 200}
+
+  twig_initializer_bootstrap:
+    class: Prokl\TimberTwigBundle\Services\TwigInitializer
+    factory: ['@twig_initializer', 'applyExtensions']
+    tags:
+      - { name: 'service.bootstrap', priority: 300}
+
   # Twig
   twig:
     class: Timber\Timber
@@ -45,11 +65,6 @@ services:
 
   Prokl\TimberTwigBundle\Services\TwigExtensions: '@twig.extension'
 
-  twig.extension.init.hook:
-    class: Prokl\TimberTwigBundle\Services\TwigExtensions
-    factory: ['@twig.extension', 'hooksInit']
-    tags: ['service.bootstrap']
-
   twig_configurator:
     class: Prokl\TimberTwigBundle\Services\TwigConfiguratorWordpress
     arguments: ['@parameter_bag', '@twig']
@@ -64,13 +79,6 @@ services:
 
   Prokl\TimberTwigBundle\Services\Proxy\TimberProxy: '@timber_proxy'
   Prokl\TimberTwigBundle\Services\Proxy\Contract\TimberProxyInterface: '@timber_proxy'
-
-  # Инициализация Тимбера путями к шаблонам из конфигов.
-  timber_init:
-    class: Prokl\TimberTwigBundle\Services\Proxy\TimberProxy
-    factory: ['@timber_proxy', 'setLocations']
-    arguments: ['@twig_configurator.templates_location']
-    tags: ['service.bootstrap']
 
   # Тимберовский глобальный контекст.
   timber_context:

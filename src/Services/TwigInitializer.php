@@ -42,7 +42,7 @@ class TwigInitializer
             $handlers[] = iterator_to_array($iterator);
         }
 
-        $this->extensions = $handlers;
+        $this->extensions = $handlers ? current($handlers) : [];
     }
 
     /**

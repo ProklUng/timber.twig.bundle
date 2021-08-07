@@ -4,7 +4,6 @@ namespace Prokl\TimberTwigBundle\Services;
 
 use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Timber\Timber;
 
 /**
  * Class TwigExtensions
@@ -36,8 +35,8 @@ class TwigExtensions
     /**
      * TwigExtensions constructor.
      *
-     * @param TwigConfig         $twigConfig
-     * @param ContainerInterface $container
+     * @param TwigConfig         $twigConfig Конфиг.
+     * @param ContainerInterface $container  Контейнер.
      */
     public function __construct(
         TwigConfig $twigConfig,
@@ -45,22 +44,6 @@ class TwigExtensions
     ) {
         $this->twigConfig = $twigConfig;
         $this->container = $container;
-    }
-
-    /**
-     * Подмешать глобальный контекст.
-     *
-     * @param array $data Контекст.
-     *
-     * @return array
-     *
-     * @since 17.02.2021
-     */
-    public function addContext(array $data = []) : array
-    {
-        $context = Timber::get_context();
-
-        return array_merge($data, $context);
     }
 
     /**

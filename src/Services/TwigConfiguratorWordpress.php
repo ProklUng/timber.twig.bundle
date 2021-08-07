@@ -4,7 +4,6 @@ namespace Prokl\TimberTwigBundle\Services;
 
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBag;
-use Timber\Timber;
 
 /**
  * Class TwigConfiguratorWordpress
@@ -22,11 +21,6 @@ class TwigConfiguratorWordpress
     private $containerBag;
 
     /**
-     * @var Timber $twig Твиг.
-     */
-    private $twig;
-
-    /**
      * @var array $configuration Конфигурация TWIG.
      */
     private $configuration = [];
@@ -35,12 +29,10 @@ class TwigConfiguratorWordpress
      * TwigConfiguratorWordpress constructor.
      *
      * @param ContainerBag $containerBag Переменные контейнера.
-     * @param Timber       $twig         Timber.
      */
-    public function __construct(ContainerBag $containerBag, Timber $twig)
+    public function __construct(ContainerBag $containerBag)
     {
         $this->containerBag = $containerBag;
-        $this->twig = $twig;
 
         if ($this->containerBag->has('twig')) {
             $this->configuration = (array)$this->containerBag->get('twig');
@@ -52,31 +44,6 @@ class TwigConfiguratorWordpress
 
         $this->configuration['web_paths'] = (array)$this->configuration['paths'];
         $this->configuration['paths'] = $this->checkTwigTemplatesPath((array)$this->configuration['paths']);
-
-        // Кэширование (если нужно).
-        $this->caching();
-    }
-
-    /**
-     * Настройка кэширования.
-     *
-     * @return void
-     *
-     * @since 29.11.2020
-     */
-    public function caching() : void
-    {
-        // Директория, где будет лежать кэш.
-        if (array_key_exists('cache_dir', $this->configuration) && $this->configuration['cache_dir']) {
-            add_filter('timber/cache/location', function () : string {
-                return (string)$this->configuration['cache.dir'];
-            });
-        }
-
-        if (array_key_exists('cache', $this->configuration)
-            && $this->configuration['cache']) {
-            $this->twig::${'cache'} = true;
-        }
     }
 
     /**
@@ -118,35 +85,7 @@ class TwigConfiguratorWordpress
      */
     public function locations() : array
     {
-        return $this->twig::${'locations'};
-    }
-
-    /**
-     * Установить массив locations целиком.
-     *
-     * @param array $value
-     *
-     * @return array
-     */
-    public function setLocation(array $value) : array
-    {
-        $this->twig::${'locations'} = $value;
-
-        return $this->twig::${'locations'};
-    }
-
-    /**
-     * Добавить путь в Timber::$locations.
-     *
-     * @param string $append
-     *
-     * @return array
-     */
-    public function appendLocation(string $append) : array
-    {
-        $this->twig::${'locations'}[] = $append;
-
-        return array_unique($this->twig::${'locations'});
+        return $this->configuration['paths'];
     }
 
     /**
@@ -168,6 +107,12 @@ class TwigConfiguratorWordpress
         }
 
         foreach ($paths as $path) {
+            if (@is_dir($path)) {
+                $arResult[] = $path;
+                continue;
+            }
+
+            // И так - с DOCUMENT_ROOT, и без оного.
             if (@is_dir(ABSPATH . $path)) {
                 $arResult[] = ABSPATH . $path;
                 continue;

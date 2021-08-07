@@ -4,8 +4,8 @@ namespace Prokl\TimberTwigBundle\Services;
 
 use Exception;
 use RuntimeException;
-use Timber\Twig_Function;
 use Twig\Environment;
+use Twig\TwigFunction;
 
 /**
  * Class TwigInitializer
@@ -74,7 +74,7 @@ class TwigInitializer
             }
 
             try {
-                $function = new Twig_Function(
+                $function = new TwigFunction(
                     $function,
                     $callable
                 );

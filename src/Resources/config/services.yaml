@@ -8,6 +8,29 @@ services:
     Twig\Extension\ExtensionInterface:
       tags: ['twig.extension']
 
+  twig: '@twig.instance'
+
+  # Инстанц Твига.
+  twig.instance:
+    class: Twig\Environment
+    factory: ['@twig.service', 'instance']
+
+  Twig\Environment: '@twig.instance'
+
+  # Twig loader
+  twig.loader:
+    class: Twig\Loader\FilesystemLoader
+    arguments:
+      - '@twig_configurator.templates_location'
+
+  twig.service:
+    class: Prokl\TimberTwigBundle\Services\TwigService
+    arguments:
+      - '@twig.loader'
+      - '%kernel.debug%'
+      - '%twig_cache_dir%'
+      - '%twig_config%'
+
   # Подхват Twig extensions
   twig_initializer:
     class: Prokl\TimberTwigBundle\Services\TwigInitializer
@@ -15,42 +38,18 @@ services:
       - '@twig.instance'
       - !tagged_iterator twig.extension
 
-  # Инициализация Тимбера путями к шаблонам из конфигов.
-  timber_init:
-    class: Prokl\TimberTwigBundle\Services\Proxy\TimberProxy
-    factory: ['@timber_proxy', 'setLocations']
-    arguments: ['@twig_configurator.templates_location']
-    tags:
-      - { name: 'service.bootstrap', priority: 100}
-
   twig.extension.init.hook:
     class: Prokl\TimberTwigBundle\Services\TwigInitializer
     factory: ['@twig_initializer', 'applyFunctions']
     arguments: ['@twig_function_config']
     tags:
-      - { name: 'service.bootstrap', priority: 200}
+      - { name: 'service.bootstrap', priority: 100}
 
   twig_initializer_bootstrap:
     class: Prokl\TimberTwigBundle\Services\TwigInitializer
     factory: ['@twig_initializer', 'applyExtensions']
     tags:
-      - { name: 'service.bootstrap', priority: 300}
-
-  # Twig
-  twig:
-    class: Timber\Timber
-
-  Timber\Timber: '@twig'
-
-  Timber\Loader:
-    class: Timber\Loader
-
-  # Настоящий, т.е. Twig\Environment инстанц Твига.
-  twig.instance:
-    class: Twig\Environment
-    factory: ['@Timber\Loader', 'get_twig']
-
-  Twig\Environment: '@twig.instance'
+      - { name: 'service.bootstrap', priority: 200}
 
   # Конфигурация Твига.
   twig.config:
@@ -70,23 +69,11 @@ services:
 
   twig_configurator:
     class: Prokl\TimberTwigBundle\Services\TwigConfiguratorWordpress
-    arguments: ['@parameter_bag', '@twig']
+    arguments: ['@parameter_bag']
 
   twig_configurator.templates_location:
     class: Prokl\TimberTwigBundle\Services\TwigConfiguratorWordpress
     factory: ['@twig_configurator', 'pathTemplates']
-
-  # Прокси к Тимберу (для миграции на следующую версию).
-  timber_proxy:
-    class: Prokl\TimberTwigBundle\Services\Proxy\TimberProxy
-
-  Prokl\TimberTwigBundle\Services\Proxy\TimberProxy: '@timber_proxy'
-  Prokl\TimberTwigBundle\Services\Proxy\Contract\TimberProxyInterface: '@timber_proxy'
-
-  # Тимберовский глобальный контекст.
-  timber_context:
-    class: Prokl\TimberTwigBundle\Services\Proxy\TimberProxy
-    factory: ['@timber_proxy', 'getContext']
 
   # Template cache warmer
   Prokl\TimberTwigBundle\Services\TemplateCacheWarmer:
@@ -95,17 +82,3 @@ services:
       - '@twig.instance'
     class: Prokl\TimberTwigBundle\Services\TemplateCacheWarmer
     tags: [kernel.cache_warmer]
-
-  # Twig loader
-#  twig.native.loader:
-#    class: Twig\Loader\FilesystemLoader
-#    arguments:
-#      - '%twig_paths%'
-#
-#  twig.service:
-#    class: Prokl\TimberTwigBundle\Services\TwigService
-#    arguments:
-#      - '@twig.loader'
-#      - '%debug%'
-#      - '%twig_cache_dir%'
-#      - '%twig_config%'

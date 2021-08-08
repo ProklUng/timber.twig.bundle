@@ -24,9 +24,6 @@ class TimberTwigExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container) : void
     {
-        // $configuration = new Configuration();
-        // $config = $this->processConfiguration($configuration, $configs);
-
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . self::DIR_CONFIG)
@@ -40,6 +37,6 @@ class TimberTwigExtension extends Extension
      */
     public function getAlias() : string
     {
-        return 'timbertwig';
+        return 'timber_twig';
     }
 }

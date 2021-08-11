@@ -8,6 +8,12 @@ services:
     Twig\Extension\ExtensionInterface:
       tags: ['twig.extension']
 
+    Twig\Loader\LoaderInterface:
+      tags: [ 'twig.loader' ]
+
+    Twig\Extension\RuntimeExtensionInterface:
+      tags: [ 'twig.runtime' ]
+
   twig: '@twig.instance'
 
   # Инстанц Твига.
@@ -30,6 +36,8 @@ services:
       - '%kernel.debug%'
       - '%twig_cache_dir%'
       - '%twig_config%'
+    calls:
+      - setContainer: ['@service_container']
 
   # Подхват Twig extensions
   twig_initializer:

@@ -55,7 +55,7 @@ class TwigConfiguratorWordpress
      */
     public function getTwigTemplatesPath(): array
     {
-        return (array)$this->configuration['paths'];
+        return (array)$this->containerBag->get('twig_paths');
     }
 
     /**
@@ -76,16 +76,6 @@ class TwigConfiguratorWordpress
         }
 
         return $paths;
-    }
-
-    /**
-     * Locations Твига.
-     *
-     * @return array
-     */
-    public function locations() : array
-    {
-        return $this->configuration['paths'];
     }
 
     /**

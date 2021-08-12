@@ -39,7 +39,7 @@ class TwigService
     private $debug;
 
     /**
-     * @var string $cachePath
+     * @var string|boolean $cachePath
      */
     private $cachePath;
 

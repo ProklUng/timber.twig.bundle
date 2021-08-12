@@ -2,6 +2,7 @@
 
 namespace Prokl\TimberTwigBundle;
 
+use Prokl\TimberTwigBundle\DependencyInjection\CompilerPass\TwigBundlesViewCompilerPass;
 use Prokl\TimberTwigBundle\DependencyInjection\CompilerPass\TwigCheckerConfigCompilerPass;
 use Prokl\TimberTwigBundle\DependencyInjection\TimberTwigExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -35,5 +36,6 @@ class TimberTwigBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new TwigCheckerConfigCompilerPass());
+        $container->addCompilerPass(new TwigBundlesViewCompilerPass());
     }
 }

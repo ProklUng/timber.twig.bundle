@@ -62,7 +62,7 @@ class TwigService
         $this->loader = $loader;
         $this->twigOptions = (array)$twigOptions;
         $this->debug = $debug;
-        $this->cachePath = $cachePath;
+        $this->cachePath = $cachePath ?: false;
 
         $this->twigEnvironment = $this->initTwig(
             $this->loader,
